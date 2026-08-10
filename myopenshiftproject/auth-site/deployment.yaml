@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth-site
+  namespace: myredhat0101-dev
+  labels:
+    app: auth-site
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: auth-site
+  template:
+    metadata:
+      labels:
+        app: auth-site
+    spec:
+      containers:
+        - name: auth-site
+          image: ghcr.io/satymsingh01/auth-site:latest
+          ports:
+            - containerPort: 8080
+          env:
+            - name: ASPNETCORE_ENVIRONMENT
+              value: "Development"
+            - name: Jwt__SecretKey
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-secret
+                  key: Jwt__SecretKey
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 300m
+              memory: 256Mi
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 15

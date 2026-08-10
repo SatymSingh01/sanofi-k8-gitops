@@ -1,0 +1,13 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: hub
+  namespace: myredhat0101-dev
+spec:
+  to:
+    kind: Service
+    name: hub
+  port:
+    targetPort: 8080
+  tls:
+    termination: edge
